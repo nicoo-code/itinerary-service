@@ -1,6 +1,7 @@
 import logging
 
 import httpx
+
 from src.domain.ports.airport_validator_port import AirportValidatorPort
 
 logger = logging.getLogger(__name__)

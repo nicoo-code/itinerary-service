@@ -3,6 +3,7 @@ import uuid
 from fastapi import APIRouter, HTTPException, Request, Response, status
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
+
 from src.application.create_itinerary import (
     AirportNotFoundException,
     CreateItineraryUseCase,

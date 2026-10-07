@@ -15,8 +15,8 @@ logger = logging.getLogger(__name__)
 
 # Re-exportar excepciones para mantener compatibilidad hacia atrás
 __all__ = [
-    "CreateItineraryUseCase",
     "AirportNotFoundException",
+    "CreateItineraryUseCase",
     "InvalidItineraryException",
 ]
 

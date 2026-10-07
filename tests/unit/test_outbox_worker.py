@@ -3,6 +3,7 @@ import uuid
 from unittest.mock import AsyncMock
 
 import pytest
+
 from src.domain.models.itinerary import OutboxEvent
 from src.infrastructure.messaging.outbox_relay_worker import OutboxRelayWorker
 

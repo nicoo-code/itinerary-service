@@ -3,4 +3,4 @@ from src.domain.events.itinerary_created_event import (
     ItineraryCreatedEvent,
 )
 
-__all__ = ["ItineraryCreatedEvent", "ItineraryCreatedData"]
+__all__ = ["ItineraryCreatedData", "ItineraryCreatedEvent"]

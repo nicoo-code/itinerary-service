@@ -3,6 +3,7 @@ from datetime import UTC, datetime
 from unittest.mock import AsyncMock
 
 import pytest
+
 from src.application.create_itinerary import (
     AirportNotFoundException,
     CreateItineraryUseCase,

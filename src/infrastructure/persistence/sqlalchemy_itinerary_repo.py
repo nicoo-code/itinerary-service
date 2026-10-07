@@ -3,6 +3,7 @@ import uuid
 from datetime import UTC, datetime
 
 from sqlalchemy.orm import Session, sessionmaker
+
 from src.domain.models.itinerary import Itinerary, OutboxEvent
 from src.domain.ports.itinerary_repository_port import ItineraryRepositoryPort
 from src.domain.ports.outbox_repository_port import OutboxRepositoryPort
