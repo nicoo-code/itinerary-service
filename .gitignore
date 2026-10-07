@@ -1,13 +1,46 @@
 __pycache__/
 *.py[cod]
 *$py.class
-*.env
-.env
-.venv/
-venv/
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Testing & Coverage
 .pytest_cache/
 .coverage
 htmlcov/
-*.sqlite
+coverage.xml
+
+# Linters
+.ruff_cache/
+.mypy_cache/
+
+# Databases
 *.db
-*.log
+*.sqlite
+*.sqlite3
+
+# Environments
+.env
+.venv
+venv/
+ENV/
+
+# IDEs
+.vscode/
+.idea/

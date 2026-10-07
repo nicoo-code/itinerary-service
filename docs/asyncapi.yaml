@@ -1,0 +1,107 @@
+asyncapi: 2.6.0
+info:
+  title: Sistema Distribuido de Itinerarios Personales - AsyncAPI Events Contract
+  version: 1.0.0
+  description: |
+    Contrato formal asíncrono para eventos emitidos por `itinerary-service` y 
+    consumidos por el componente Serverless `notification-service` a través de RabbitMQ.
+
+servers:
+  production:
+    url: rabbitmq:5672
+    protocol: amqp
+    description: Broker RabbitMQ de producción
+  development:
+    url: localhost:5672
+    protocol: amqp
+    description: Broker RabbitMQ de desarrollo local
+
+defaultContentType: application/json
+
+channels:
+  itinerary/created:
+    description: Canal de comunicación asociado al exchange `itinerary.events` con routing key `itinerary.created`.
+    publish:
+      summary: Publicación del evento cuando se crea un nuevo itinerario.
+      operationId: publishItineraryCreated
+      message:
+        $ref: '#/components/messages/ItineraryCreatedEvent'
+    subscribe:
+      summary: Suscripción reactiva para procesar notificaciones y auditoría.
+      operationId: consumeItineraryCreated
+      message:
+        $ref: '#/components/messages/ItineraryCreatedEvent'
+
+components:
+  messages:
+    ItineraryCreatedEvent:
+      name: ItineraryCreatedEvent
+      title: Evento de Itinerario Creado
+      summary: Notificación emitida tras la persistencia atómica de un nuevo itinerario de viaje.
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/ItineraryCreatedPayload'
+
+  schemas:
+    ItineraryCreatedPayload:
+      type: object
+      required:
+        - event_id
+        - event_type
+        - timestamp
+        - data
+      properties:
+        event_id:
+          type: string
+          format: uuid
+          description: Identificador único del evento para garantizar procesamiento idempotente.
+          example: "c56a4180-65aa-42ec-a945-5fd21dec0538"
+        event_type:
+          type: string
+          description: Nombre canónico del evento de integración.
+          example: "ItineraryCreatedEvent"
+        timestamp:
+          type: string
+          format: date-time
+          description: Marca de tiempo ISO-8601 de la creación del evento.
+          example: "2026-09-20T22:30:00Z"
+        trace_id:
+          type: string
+          description: Correlation ID de trazabilidad distribuida OpenTelemetry.
+          example: "4bf92f3577b34da6a3ce929d0e0e4736"
+        data:
+          type: object
+          required:
+            - itinerary_id
+            - user_name
+            - origin_airport_id
+            - destination_airport_id
+            - departure_date
+            - duration_minutes
+          properties:
+            itinerary_id:
+              type: string
+              format: uuid
+              description: ID del itinerario registrado en la base de datos.
+              example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+            user_name:
+              type: string
+              description: Nombre del pasajero o usuario creador.
+              example: "Juan Perez"
+            origin_airport_id:
+              type: integer
+              description: Identificador numérico del aeropuerto de salida.
+              example: 1
+            destination_airport_id:
+              type: integer
+              description: Identificador numérico del aeropuerto de destino.
+              example: 5
+            departure_date:
+              type: string
+              format: date-time
+              description: Fecha y hora programadas para el vuelo.
+              example: "2026-10-15T08:00:00Z"
+            duration_minutes:
+              type: integer
+              description: Duración estimada del vuelo en minutos.
+              example: 55
