@@ -1,0 +1,64 @@
+services:
+  itinerary-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: itinerary-service-standalone
+    ports:
+      - "8002:8002"
+    environment:
+      - PORT=8002
+      - DATABASE_URL=postgresql://itinerary_user:itinerary_pass@postgres-itinerary:5432/itinerary_db
+      - AIRPORT_SERVICE_URL=http://airport-service:8001
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
+      - LOG_LEVEL=INFO
+    depends_on:
+      postgres-itinerary:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - itinerary-net
+
+  postgres-itinerary:
+    image: postgres:15-alpine
+    container_name: postgres-itinerary-standalone
+    environment:
+      - POSTGRES_USER=itinerary_user
+      - POSTGRES_PASSWORD=itinerary_pass
+      - POSTGRES_DB=itinerary_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata-itinerary:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U itinerary_user -d itinerary_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - itinerary-net
+
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    container_name: rabbitmq-standalone
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - itinerary-net
+
+volumes:
+  pgdata-itinerary:
+
+networks:
+  itinerary-net:
+    driver: bridge
