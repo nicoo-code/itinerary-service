@@ -115,11 +115,14 @@ app.add_middleware(
 # Middleware de Observabilidad y Correlación
 @app.middleware("http")
 async def correlation_logging_middleware(request: Request, call_next):
-    trace_id = request.headers.get("x-trace-id", str(uuid.uuid4()))
+    trace_id = request.headers.get("x-trace-id") or str(uuid.uuid4())
+    # Exponer el trace_id a los endpoints (ej. creación de itinerarios / eventos outbox)
+    request.state.trace_id = trace_id
     start_time = time.time()
 
     response = await call_next(request)
     duration_ms = (time.time() - start_time) * 1000
+    response.headers["X-Trace-Id"] = trace_id
 
     extra = {"trace_id": trace_id}
     logger.info(

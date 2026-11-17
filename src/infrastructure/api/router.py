@@ -115,12 +115,16 @@ def create_itinerary_router(
     )
     async def healthcheck():
         db_ok = True
+        session = None
         try:
             session = session_factory()
             session.execute(text("SELECT 1"))
-            session.close()
         except (SQLAlchemyError, OSError, RuntimeError):
             db_ok = False
+        finally:
+            # Garantizar la liberación de la conexión aunque la consulta falle
+            if session is not None:
+                session.close()
 
         return HealthCheckResponse(
             status="UP",
